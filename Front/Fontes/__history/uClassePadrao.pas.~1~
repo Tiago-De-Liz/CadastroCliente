@@ -1,0 +1,10 @@
+unit uClassePadrao;
+
+interface
+
+type
+  TPadrao
+
+implementation
+
+end.

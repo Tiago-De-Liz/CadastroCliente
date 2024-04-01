@@ -1,0 +1,15 @@
+program uServidorProject;
+{$APPTYPE GUI}
+
+uses
+  Vcl.Forms,
+  uSServidor in 'Fontes\uSServidor.pas' {Form1},
+  QueryPadrao in 'Fontes\QueryPadrao.pas';
+
+{$R *.res}
+
+begin
+  Application.Initialize;
+  Application.CreateForm(TFormPrincipal, Form1);
+  Application.Run;
+end.

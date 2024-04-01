@@ -1,0 +1,671 @@
+object frnPrincipal: TfrnPrincipal
+  Left = 0
+  Top = 0
+  Caption = 'Cadastro de Cliente'
+  ClientHeight = 508
+  ClientWidth = 779
+  Color = clBtnFace
+  Font.Charset = DEFAULT_CHARSET
+  Font.Color = clWindowText
+  Font.Height = -12
+  Font.Name = 'Segoe UI'
+  Font.Style = []
+  TextHeight = 15
+  object pBarra: TPanel
+    Left = 0
+    Top = 0
+    Width = 779
+    Height = 57
+    Align = alTop
+    TabOrder = 0
+    ExplicitWidth = 771
+    object btnFiltrar: TButton
+      Left = 321
+      Top = 1
+      Width = 64
+      Height = 55
+      Align = alLeft
+      Caption = 'Filtrar'
+      TabOrder = 0
+      OnClick = btnFiltrarClick
+    end
+    object btnExcluir: TButton
+      Left = 65
+      Top = 1
+      Width = 64
+      Height = 55
+      Align = alLeft
+      Caption = 'Excluir'
+      TabOrder = 1
+      OnClick = btnExcluirClick
+    end
+    object btncNovoRegistro: TButton
+      Left = 1
+      Top = 1
+      Width = 64
+      Height = 55
+      Align = alLeft
+      Caption = 'NovoRegistro'
+      TabOrder = 2
+      OnClick = btnNovoRegistroClick
+    end
+    object btnCancelar: TButton
+      Left = 129
+      Top = 1
+      Width = 64
+      Height = 55
+      Align = alLeft
+      Caption = 'Cancelar'
+      Enabled = False
+      TabOrder = 3
+      OnClick = btnCancelarClick
+    end
+    object btnSalvar: TButton
+      Left = 193
+      Top = 1
+      Width = 64
+      Height = 55
+      Align = alLeft
+      Caption = 'Salvar'
+      Enabled = False
+      TabOrder = 4
+      OnClick = btnSalvarClick
+    end
+    object btnVoltar: TButton
+      Left = 257
+      Top = 1
+      Width = 64
+      Height = 55
+      Align = alLeft
+      Caption = 'Voltar'
+      Enabled = False
+      TabOrder = 5
+      OnClick = btnVoltarClick
+    end
+  end
+  object StatusBar1: TStatusBar
+    Left = 0
+    Top = 488
+    Width = 779
+    Height = 20
+    Margins.Left = 0
+    Margins.Top = 0
+    Margins.Right = 50
+    Margins.Bottom = 0
+    Panels = <
+      item
+        Alignment = taRightJustify
+        Width = 600
+      end
+      item
+        Alignment = taRightJustify
+        Bevel = pbNone
+        Text = 'Informa'#231#245'es Clientes'
+        Width = 100
+      end>
+    ExplicitTop = 467
+    ExplicitWidth = 771
+  end
+  object pGrid: TPanel
+    Left = 0
+    Top = 57
+    Width = 779
+    Height = 431
+    Align = alClient
+    TabOrder = 3
+    ExplicitWidth = 771
+    ExplicitHeight = 410
+    object DBGrid1: TDBGrid
+      Left = 1
+      Top = 65
+      Width = 777
+      Height = 365
+      Align = alClient
+      DataSource = dsGrid
+      Options = [dgTitles, dgIndicator, dgColumnResize, dgColLines, dgRowLines, dgTabs, dgRowSelect, dgConfirmDelete, dgCancelOnExit, dgTitleClick, dgTitleHotTrack]
+      ReadOnly = True
+      TabOrder = 0
+      TitleFont.Charset = DEFAULT_CHARSET
+      TitleFont.Color = clWindowText
+      TitleFont.Height = -12
+      TitleFont.Name = 'Segoe UI'
+      TitleFont.Style = []
+      OnDblClick = DBGrid1DblClick
+      Columns = <
+        item
+          Expanded = False
+          FieldName = 'CODIGO'
+          Title.Caption = 'C'#243'digo'
+          Width = 59
+          Visible = True
+        end
+        item
+          Expanded = False
+          FieldName = 'NOME'
+          Title.Caption = 'Nome'
+          Width = 318
+          Visible = True
+        end
+        item
+          Expanded = False
+          FieldName = 'APELIDO'
+          Title.Caption = 'Apelido'
+          Width = 193
+          Visible = True
+        end
+        item
+          Expanded = False
+          FieldName = 'CPFCNPJ'
+          Title.Caption = 'CPF/CNPJ'
+          Width = 125
+          Visible = True
+        end
+        item
+          Expanded = False
+          FieldName = 'CEP'
+          Width = 100
+          Visible = True
+        end
+        item
+          Expanded = False
+          FieldName = 'LOGRADOURO'
+          Title.Caption = 'Logradouro'
+          Width = 217
+          Visible = True
+        end
+        item
+          Expanded = False
+          FieldName = 'PAIS'
+          Title.Caption = 'Pa'#237's'
+          Width = 117
+          Visible = True
+        end
+        item
+          Expanded = False
+          FieldName = 'ESTADO'
+          Title.Caption = 'Estado'
+          Width = 145
+          Visible = True
+        end
+        item
+          Expanded = False
+          FieldName = 'MUNICIPIO'
+          Title.Caption = 'Munic'#237'pio'
+          Width = 137
+          Visible = True
+        end
+        item
+          Expanded = False
+          FieldName = 'EMAIL'
+          Title.Caption = 'E-mail'
+          Width = 262
+          Visible = True
+        end>
+    end
+    object pFiltro: TPanel
+      Left = 1
+      Top = 1
+      Width = 777
+      Height = 64
+      Align = alTop
+      TabOrder = 1
+      ExplicitWidth = 769
+      object pNome: TPanel
+        Left = 8
+        Top = 6
+        Width = 249
+        Height = 22
+        TabOrder = 0
+        object lbNome: TLabel
+          AlignWithMargins = True
+          Left = 4
+          Top = 1
+          Width = 36
+          Height = 15
+          Margins.Top = 0
+          Margins.Bottom = 5
+          Align = alLeft
+          Alignment = taCenter
+          Caption = 'Nome:'
+          Font.Charset = DEFAULT_CHARSET
+          Font.Color = clWindowText
+          Font.Height = -12
+          Font.Name = 'Segoe UI'
+          Font.Style = []
+          ParentFont = False
+          ExplicitHeight = 16
+        end
+        object edtNome: TEdit
+          Left = 43
+          Top = 1
+          Width = 205
+          Height = 20
+          Align = alClient
+          Anchors = [akLeft, akRight, akBottom]
+          AutoSize = False
+          TabOrder = 0
+        end
+      end
+      object pCodigo: TPanel
+        Left = 8
+        Top = 34
+        Width = 249
+        Height = 22
+        TabOrder = 1
+        object lbCodigo: TLabel
+          AlignWithMargins = True
+          Left = 4
+          Top = 1
+          Width = 42
+          Height = 15
+          Margins.Top = 0
+          Margins.Bottom = 5
+          Align = alLeft
+          Alignment = taCenter
+          Caption = 'C'#243'digo:'
+          Font.Charset = DEFAULT_CHARSET
+          Font.Color = clWindowText
+          Font.Height = -12
+          Font.Name = 'Segoe UI'
+          Font.Style = []
+          ParentFont = False
+        end
+        object edtCodigo: TEdit
+          Left = 49
+          Top = 1
+          Width = 199
+          Height = 20
+          Align = alClient
+          Anchors = [akLeft, akRight, akBottom]
+          AutoSize = False
+          TabOrder = 0
+        end
+      end
+      object pCPFCNPJ: TPanel
+        Left = 320
+        Top = 7
+        Width = 257
+        Height = 20
+        TabOrder = 2
+        object lbCPFCNPJ: TLabel
+          AlignWithMargins = True
+          Left = 4
+          Top = 1
+          Width = 56
+          Height = 13
+          Margins.Top = 0
+          Margins.Bottom = 5
+          Align = alLeft
+          Alignment = taCenter
+          Caption = 'CPF/CNPJ:'
+          Font.Charset = DEFAULT_CHARSET
+          Font.Color = clWindowText
+          Font.Height = -12
+          Font.Name = 'Segoe UI'
+          Font.Style = []
+          ParentFont = False
+          ExplicitHeight = 15
+        end
+        object edtCPFCNPJ: TEdit
+          Left = 63
+          Top = 1
+          Width = 193
+          Height = 18
+          Align = alClient
+          Anchors = [akLeft, akRight, akBottom]
+          AutoSize = False
+          TabOrder = 0
+        end
+      end
+    end
+  end
+  object pCampos: TPanel
+    Left = 0
+    Top = 57
+    Width = 779
+    Height = 431
+    Align = alClient
+    TabOrder = 2
+    Visible = False
+    ExplicitWidth = 771
+    ExplicitHeight = 410
+    object lbCodigoCad: TLabel
+      Left = 13
+      Top = 7
+      Width = 44
+      Height = 15
+      Caption = 'C'#243'digo*'
+    end
+    object lbNomeCad: TLabel
+      Left = 106
+      Top = 7
+      Width = 38
+      Height = 15
+      Caption = 'Nome*'
+    end
+    object lbApelido: TLabel
+      Left = 516
+      Top = 7
+      Width = 41
+      Height = 15
+      Caption = 'Apelido'
+    end
+    object lbEmail: TLabel
+      Left = 14
+      Top = 159
+      Width = 34
+      Height = 15
+      Caption = 'E-mail'
+    end
+    object lbTelefone: TLabel
+      Left = 263
+      Top = 159
+      Width = 44
+      Height = 15
+      Caption = 'Telefone'
+    end
+    object lbSexo: TLabel
+      Left = 416
+      Top = 159
+      Width = 30
+      Height = 15
+      Caption = 'Sexo*'
+    end
+    object lbTipoPessoa: TLabel
+      Left = 599
+      Top = 159
+      Width = 83
+      Height = 15
+      Caption = 'Tipo de Pessoa*'
+    end
+    object lbInscricaoMunicipal: TLabel
+      Left = 260
+      Top = 207
+      Width = 103
+      Height = 15
+      Caption = 'Inscri'#231#227'o Municipal'
+    end
+    object lbInscricaoEstadual: TLabel
+      Left = 497
+      Top = 207
+      Width = 94
+      Height = 15
+      Caption = 'Inscri'#231#227'o Estadual'
+    end
+    object lbCPFCNPJCad: TLabel
+      Left = 14
+      Top = 207
+      Width = 53
+      Height = 15
+      Caption = 'CPF/CNPJ'
+    end
+    object edtCodigoCad: TEdit
+      Left = 13
+      Top = 22
+      Width = 84
+      Height = 23
+      Enabled = False
+      ReadOnly = True
+      TabOrder = 0
+    end
+    object edtNomeCad: TEdit
+      Left = 106
+      Top = 22
+      Width = 404
+      Height = 23
+      TabOrder = 1
+    end
+    object edtApelido: TEdit
+      Left = 516
+      Top = 22
+      Width = 184
+      Height = 23
+      TabOrder = 2
+    end
+    object pEndereco: TPanel
+      Left = 13
+      Top = 51
+      Width = 756
+      Height = 102
+      TabOrder = 3
+      object lbCEP: TLabel
+        Left = 32
+        Top = 5
+        Width = 21
+        Height = 15
+        Caption = 'CEP'
+      end
+      object lbLogradouro: TLabel
+        Left = 134
+        Top = 5
+        Width = 67
+        Height = 15
+        Caption = 'Logradouro*'
+      end
+      object lbNumero: TLabel
+        Left = 406
+        Top = 5
+        Width = 49
+        Height = 15
+        Caption = 'N'#250'mero*'
+      end
+      object lbComplemento: TLabel
+        Left = 32
+        Top = 53
+        Width = 77
+        Height = 15
+        Caption = 'Complemento'
+      end
+      object lbPais: TLabel
+        Left = 231
+        Top = 53
+        Width = 26
+        Height = 15
+        Caption = 'Pa'#237's*'
+      end
+      object lbEstado: TLabel
+        Left = 406
+        Top = 53
+        Width = 40
+        Height = 15
+        Caption = 'Estado*'
+      end
+      object lbMunicipio: TLabel
+        Left = 586
+        Top = 53
+        Width = 59
+        Height = 15
+        Caption = 'Munic'#237'pio*'
+      end
+      object lbBairro: TLabel
+        Left = 554
+        Top = 5
+        Width = 36
+        Height = 15
+        Caption = 'Bairro*'
+      end
+      object pLbEndereco: TPanel
+        Left = 1
+        Top = 1
+        Width = 25
+        Height = 100
+        Align = alLeft
+        TabOrder = 0
+        object lbEndereco: TLabel
+          Left = 0
+          Top = 12
+          Width = 24
+          Height = 83
+          Alignment = taCenter
+          AutoSize = False
+          Caption = 'Endere'#231'o'
+          Font.Charset = DEFAULT_CHARSET
+          Font.Color = clWindowText
+          Font.Height = -16
+          Font.Name = 'Segoe UI'
+          Font.Orientation = 900
+          Font.Style = [fsBold]
+          ParentFont = False
+          Transparent = True
+        end
+      end
+      object mskCEP: TMaskEdit
+        Left = 32
+        Top = 20
+        Width = 94
+        Height = 23
+        EditMask = '00000\-999;1;_'
+        MaxLength = 9
+        TabOrder = 1
+        Text = '     -   '
+        OnExit = mskCEPExit
+      end
+      object edtLogradouro: TEdit
+        Left = 134
+        Top = 20
+        Width = 266
+        Height = 23
+        TabOrder = 2
+      end
+      object edtNumero: TEdit
+        Left = 406
+        Top = 20
+        Width = 142
+        Height = 23
+        TabOrder = 3
+      end
+      object edtComplemeto: TEdit
+        Left = 32
+        Top = 68
+        Width = 193
+        Height = 23
+        TabOrder = 4
+      end
+      object cbxPais: TDBComboBox
+        Left = 231
+        Top = 68
+        Width = 169
+        Height = 23
+        DataSource = dsPais
+        TabOrder = 5
+      end
+      object cbxEstado: TDBComboBox
+        Left = 406
+        Top = 68
+        Width = 174
+        Height = 23
+        DataSource = dsEstado
+        TabOrder = 6
+      end
+      object cbxMunicipio: TDBComboBox
+        Left = 586
+        Top = 68
+        Width = 159
+        Height = 23
+        DataSource = dsMunicipio
+        TabOrder = 7
+      end
+      object edtBairro: TEdit
+        Left = 554
+        Top = 20
+        Width = 191
+        Height = 23
+        TabOrder = 8
+      end
+    end
+    object ckAtivo: TCheckBox
+      Left = 707
+      Top = 24
+      Width = 62
+      Height = 17
+      Caption = 'Ativo*'
+      Checked = True
+      State = cbChecked
+      TabOrder = 4
+    end
+    object edtEmail: TEdit
+      Left = 14
+      Top = 174
+      Width = 243
+      Height = 23
+      TabOrder = 5
+      OnExit = edtEmailExit
+    end
+    object mskTelefone: TMaskEdit
+      Left = 263
+      Top = 174
+      Width = 143
+      Height = 23
+      EditMask = '!\(999\)00000-0000;1;_'
+      MaxLength = 15
+      TabOrder = 6
+      Text = '(   )     -    '
+    end
+    object cbxSexo: TComboBox
+      Left = 416
+      Top = 174
+      Width = 177
+      Height = 23
+      ItemIndex = 0
+      TabOrder = 7
+      Text = 'Masculino'
+      Items.Strings = (
+        'Masculino'
+        'Femino')
+    end
+    object edtInscricaoMunicipal: TEdit
+      Left = 260
+      Top = 222
+      Width = 231
+      Height = 23
+      TabOrder = 8
+    end
+    object edtInscricaoEstadual: TEdit
+      Left = 497
+      Top = 222
+      Width = 274
+      Height = 23
+      TabOrder = 9
+    end
+    object cbxTipoPessoa: TComboBox
+      Left = 599
+      Top = 174
+      Width = 170
+      Height = 23
+      ItemIndex = 0
+      TabOrder = 10
+      Text = 'Pessoa F'#237'sica'
+      OnChange = cbxTipoPessoaChange
+      Items.Strings = (
+        'Pessoa F'#237'sica'
+        'Pessoa Jur'#237'dica')
+    end
+    object mskCNPJCPF: TMaskEdit
+      Left = 14
+      Top = 222
+      Width = 237
+      Height = 23
+      EditMask = '!000.000.000-00;1;_'
+      MaxLength = 14
+      TabOrder = 11
+      Text = '   .   .   -  '
+      OnExit = mskCNPJCPFExit
+    end
+  end
+  object dsGrid: TDataSource
+    Left = 384
+    Top = 320
+  end
+  object dsPais: TDataSource
+    Left = 552
+    Top = 393
+  end
+  object dsEstado: TDataSource
+    Left = 608
+    Top = 393
+  end
+  object dsMunicipio: TDataSource
+    Left = 656
+    Top = 393
+  end
+end

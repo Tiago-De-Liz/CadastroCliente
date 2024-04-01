@@ -1,0 +1,399 @@
+unit uSConsulta;
+
+interface
+
+uses
+  System.SysUtils,
+  System.Classes,
+  System.JSON,
+
+  DBClient,
+
+  FireDAC.Comp.Client,
+  FireDAC.Comp.DataSet,
+  FireDAC.Stan.Async,
+  FireDAC.Comp.BatchMove,
+  FireDAC.Comp.BatchMove.DataSet,
+
+  uQueryPadrao;
+
+type
+  TConsulta = class(TQueryPadrao)
+    Constructor Create;
+    Destructor  Destroy; Override;
+  private
+    FParametros:String;
+  public
+    procedure RealizarConsultaPessoa;
+    procedure RealizarConsultaTabelas;
+    function RetornaNewCodigoPessoa:Integer;
+    function NewIDClientes:Int64;
+    function RetornaIDNomeLigacao(FNome,FTabela:String):Int64;
+
+    procedure ExcluirRegistros;
+    procedure SalvarRegistros(FStreamQuery:TStream);
+
+    procedure ValidarCPFCNPJ(FCPFCNPJ:String;FID:Int64);
+
+    property Parametros:String read FParametros write FParametros;
+  end;
+
+implementation
+
+uses uParametrosJSON;
+
+{ TConsulta }
+
+constructor TConsulta.Create;
+begin
+  CreateQueryPadrao(nil)
+end;
+
+destructor TConsulta.Destroy;
+begin
+  DestroyQueryPadrao(nil);
+
+  inherited;
+end;
+
+procedure TConsulta.ExcluirRegistros;
+begin
+  var QDel := NewSQuery;
+  try
+    QDel.SQL.Add('DELETE FROM CLIENTES '+
+                 'WHERE ID = :CID');
+    var jsonArray := TJSONObject.ParseJSONValue(Parametros) as TJSONArray;
+    try
+      if Assigned(jsonArray) and (jsonArray.Count > 0) then
+      begin
+        var jsonObject := jsonArray.Items[0] as TJSONObject;
+        QDel.ParamByName('CID').AsLargeInt := StrToInt64(jsonObject.GetValue('valor').Value);
+      end;
+    finally
+      jsonArray.Free;
+    end;
+    QDel.ExecSQL;
+  finally
+    QDel.Free;
+  end;
+end;
+
+function TConsulta.NewIDClientes: Int64;
+begin
+  var QSeq := NewSQuery;
+  try
+    QSeq.SQL.Add('SELECT nextval(''public.seq_clientes_id'') AS NEWID');
+    QSeq.Open;
+
+    Result := QSeq.FieldByName('NEWID').AsLargeInt;
+  finally
+    QSeq.Free;
+  end;
+end;
+
+procedure TConsulta.RealizarConsultaPessoa;
+begin
+  var Q := NewSQuery;
+  try
+    Q.SQL.Add('SELECT C.ID, '+
+              '       C.CODIGO, '+
+              '       C.NOME, '+
+              '       C.APELIDO, '+
+              '       C.CPFCNPJ, '+
+              '       C.CEP, '+
+              '       C.LOGRADOURO, '+
+              '       P.NOME AS PAIS, '+
+              '       E.NOME AS ESTADO, '+
+              '       M.NOME AS MUNICIPIO, '+
+              '       C.EMAIL, '+
+              '       C.NUMERO, '+
+              '       C.INSCRICAOMUNICIPAL, '+
+              '       C.INSCRICAOESTADUAL, '+
+              '       C.ATIVO, '+
+              '       C.BAIRRO, '+
+              '       C.COMPLEMENTO, '+
+              '       C.TELEFONE, '+
+              '       C.TIPOPESSOA, '+
+              '       C.SEXO '+
+              'FROM CLIENTES C '+
+              'INNER JOIN PAISES P ON P.ID = C.PAIS '+
+              'INNER JOIN ESTADOS E ON E.ID = C.ESTADO '+
+              'INNER JOIN MUNICIPIOS M ON M.ID = C.MUNICIPIO ');
+    var AndWhere:String;
+    if (Parametros <> EmptyStr) then
+    begin
+      var jsonArray := TJSONObject.ParseJSONValue(Parametros) as TJSONArray;
+      try
+        if Assigned(jsonArray) and (jsonArray.Count > 0) then
+        begin
+          for var I := 0 to jsonArray.Count - 1 do
+          begin
+            var jsonObject := jsonArray.Items[I] as TJSONObject;
+            if (jsonObject.GetValue('valor').Value <> EmptyStr) then
+            begin
+              if (AndWhere <> EmptyStr) then
+                AndWhere := ' AND'
+              else
+                AndWhere := ' WHERE';
+
+              if (UpperCase(jsonObject.GetValue('nome').Value) = 'CODIGO') then
+              begin
+                Q.SQL.Add(AndWhere + ' C.' + jsonObject.GetValue('nome').Value + ' = :' + jsonObject.GetValue('nome').Value);
+                Q.ParamByName(jsonObject.GetValue('nome').Value).AsInteger := StrToIntDef(jsonObject.GetValue('valor').Value, 0);
+              end else
+              begin
+                Q.SQL.Add(AndWhere + ' REPLACE(REPLACE(REPLACE(UPPER(C.' + jsonObject.GetValue('nome').Value + '), ''/'', ''''), ''.'', ''''), ''-'', '''') LIKE :' + jsonObject.GetValue('nome').Value);
+                Q.ParamByName(jsonObject.GetValue('nome').Value).AsString := UpperCase(jsonObject.GetValue('valor').Value);
+              end;
+            end;
+          end;
+        end;
+      finally
+        jsonArray.Free;
+      end;
+    end;
+    Q.Open();
+
+    var MemTable := TFDMemTable.create(Nil);
+    try
+      MemTable.FieldDefs.Assign(Q.FieldDefs);
+      MemTable.CreateDataSet;
+      MemTable.CopyDataSet(Q, [coStructure, coRestart, coAppend]);
+      MemTable.SaveToStream(Stream);
+      Stream.Position := 0;
+    finally
+      MemTable.Free;
+    end;
+  finally
+    Q.Free;
+  end;
+end;
+
+procedure TConsulta.RealizarConsultaTabelas;
+begin
+  var Q := NewSQuery;
+  try
+    var jsonArray := TJSONObject.ParseJSONValue(Parametros) as TJSONArray;
+    try
+      if Assigned(jsonArray) and (jsonArray.Count > 0) then
+      begin
+        var jsonObject := jsonArray.Items[0] as TJSONObject;
+        Q.SQL.Add('SELECT * '+
+                  'FROM '+jsonObject.GetValue('valor').Value+' ');
+
+        if (jsonArray.Count > 1) then
+        begin
+          jsonObject := jsonArray.Items[1] as TJSONObject;
+          if (jsonObject.GetValue('valor').Value <> EmptyStr) then
+          begin
+            Q.SQL.Add('WHERE '+jsonObject.GetValue('nome').Value+' = :'+jsonObject.GetValue('nome').Value);
+            if (UpperCase(jsonObject.GetValue('nome').Value) = 'PAIS') then
+              Q.ParamByName(jsonObject.GetValue('nome').Value).AsLargeInt := RetornaIDNomeLigacao(jsonObject.GetValue('valor').Value,'ESTADOS')
+            else
+              Q.ParamByName(jsonObject.GetValue('nome').Value).AsLargeInt := RetornaIDNomeLigacao(jsonObject.GetValue('valor').Value,'MUNICIPIOS');
+          end;
+        end;
+      end;
+    finally
+      jsonArray.Free;
+    end;
+    Q.Open();
+
+    var MemTable := TFDMemTable.create(Nil);
+    try
+      MemTable.FieldDefs.Assign(Q.FieldDefs);
+      MemTable.CreateDataSet;
+      MemTable.CopyDataSet(Q, [coStructure, coRestart, coAppend]);
+      MemTable.SaveToStream(Stream);
+      Stream.Position := 0;
+    finally
+      MemTable.Free;
+    end;
+  finally
+    Q.Free;
+  end;
+end;
+
+function TConsulta.RetornaIDNomeLigacao(FNome, FTabela: String): Int64;
+begin
+  var QCon := NewSQuery;
+  try
+    QCon.SQL.Add('SELECT ID '+
+                 'FROM '+FTabela+' '+
+                 'WHERE UPPER(NOME) = :NOME');
+    QCon.ParamByName('NOME').AsString := UpperCase(FNome);
+    QCon.Open;
+
+    if not (QCon.RecordCount > 0) then
+      raise Exception.Create('Registro da tabela: '+FTabela+ ' não localizado')
+    else
+      Result := QCon.FieldByName('ID').AsLargeInt;
+  finally
+    QCon.Free;
+  end;
+end;
+
+function TConsulta.RetornaNewCodigoPessoa: Integer;
+begin
+  var Q := NewSQuery;
+  try
+    Q.SQL.Add('SELECT MAX(CODIGO) AS COD '+
+              'FROM CLIENTES');
+    Q.Open();
+
+    Result := Q.FieldByName('COD').AsInteger + 1;
+  finally
+    Q.Free;
+  end;
+end;
+
+procedure TConsulta.SalvarRegistros(FStreamQuery:TStream);
+begin
+  var Q := NewSQuery;
+  try
+    var MemTable := TFDMemTable.Create(nil);
+    try
+      MemTable.LoadFromStream(FStreamQuery);
+
+      ValidarCPFCNPJ(MemTable.FieldByName('CPFCNPJ').AsString,MemTable.FieldByName('ID').AsLargeInt);
+
+      Q.SQL.Clear;
+      Q.SQL.Add('SELECT ID FROM CLIENTES WHERE ID = :CID');
+      Q.ParamByName('CID').AsLargeInt := MemTable.FieldByName('ID').AsLargeInt;
+      Q.Open();
+
+      if (Q.RecordCount > 0) then
+      begin
+        Q.SQL.Clear;
+        Q.SQL.Add('UPDATE CLIENTES '+
+                  'SET  NOME = :NOME, '+
+                  '     APELIDO = :APELIDO, '+
+                  '     LOGRADOURO = :LOGRADOURO, '+
+                  '     NUMERO = :NUMERO, '+
+                  '     COMPLEMENTO = :COMPLEMENTO, '+
+                  '     BAIRRO = :BAIRRO, '+
+                  '     EMAIL = :EMAIL, '+
+                  '     CEP   = :CEP, '+
+                  '     TELEFONE = :TELEFONE, '+
+                  '     INSCRICAOMUNICIPAL = :INSCRICAOMUNICIPAL, '+
+                  '     INSCRICAOESTADUAL = :INSCRICAOESTADUAL, '+
+                  '     CPFCNPJ = :CPFCNPJ, '+
+                  '     ATIVO = :ATIVO, '+
+                  '     PAIS = :PAIS, '+
+                  '     ESTADO = :ESTADO, '+
+                  '     MUNICIPIO = :MUNICIPIO, '+
+                  '     SEXO = :SEXO, '+
+                  '     TIPOPESSOA = :TIPOPESSOA '+
+                  'WHERE ID = :CID');
+        Q.ParamByName('NOME').AsString               := MemTable.FieldByName('NOME').AsString;
+        Q.ParamByName('APELIDO').AsString            := MemTable.FieldByName('APELIDO').AsString;
+        Q.ParamByName('LOGRADOURO').AsString         := MemTable.FieldByName('LOGRADOURO').AsString;
+        Q.ParamByName('NUMERO').AsInteger            := MemTable.FieldByName('NUMERO').AsInteger;
+        Q.ParamByName('COMPLEMENTO').AsString        := MemTable.FieldByName('COMPLEMENTO').AsString;
+        Q.ParamByName('BAIRRO').AsString             := MemTable.FieldByName('BAIRRO').AsString;
+        Q.ParamByName('EMAIL').AsString              := MemTable.FieldByName('EMAIL').AsString;
+        Q.ParamByName('CEP').AsString                := MemTable.FieldByName('CEP').AsString;
+        Q.ParamByName('TELEFONE').AsString           := MemTable.FieldByName('TELEFONE').AsString;
+        Q.ParamByName('INSCRICAOMUNICIPAL').AsString := MemTable.FieldByName('INSCRICAOMUNICIPAL').AsString;
+        Q.ParamByName('INSCRICAOESTADUAL').AsString  := MemTable.FieldByName('INSCRICAOESTADUAL').AsString;
+        Q.ParamByName('CPFCNPJ').AsString            := MemTable.FieldByName('CPFCNPJ').AsString;
+        Q.ParamByName('ATIVO').AsString              := MemTable.FieldByName('ATIVO').AsString;
+        Q.ParamByName('PAIS').AsLargeInt             := RetornaIDNomeLigacao(MemTable.FieldByName('PAIS').AsString,'PAISES');
+        Q.ParamByName('ESTADO').AsLargeInt           := RetornaIDNomeLigacao(MemTable.FieldByName('ESTADO').AsString,'ESTADOS');
+        Q.ParamByName('MUNICIPIO').AsLargeInt        := RetornaIDNomeLigacao(MemTable.FieldByName('MUNICIPIO').AsString,'MUNICIPIOS');
+        Q.ParamByName('SEXO').AsString               := MemTable.FieldByName('SEXO').AsString;
+        Q.ParamByName('TIPOPESSOA').AsString         := MemTable.FieldByName('TIPOPESSOA').AsString;
+        Q.ParamByName('CID').AsLargeInt              := MemTable.FieldByName('ID').AsLargeInt;
+      end else
+      begin
+        Q.SQL.Clear;
+        Q.SQL.Add('INSERT INTO CLIENTES (ID, '+
+                  '                      CODIGO, '+
+                  '                      NOME, '+
+                  '                      APELIDO, '+
+                  '                      LOGRADOURO, '+
+                  '                      NUMERO, '+
+                  '                      COMPLEMENTO, '+
+                  '                      BAIRRO, '+
+                  '                      EMAIL, '+
+                  '                      CEP, '+
+                  '                      TELEFONE, '+
+                  '                      INSCRICAOMUNICIPAL, '+
+                  '                      INSCRICAOESTADUAL, '+
+                  '                      CPFCNPJ, '+
+                  '                      ATIVO, '+
+                  '                      PAIS, '+
+                  '                      ESTADO, '+
+                  '                      MUNICIPIO, '+
+                  '                      SEXO, '+
+                  '                      TIPOPESSOA) '+
+                  '               VALUES (:ID, '+
+                  '                       :CODIGO, '+
+                  '                       :NOME, '+
+                  '                       :APELIDO, '+
+                  '                       :LOGRADOURO, '+
+                  '                       :NUMERO, '+
+                  '                       :COMPLEMENTO, '+
+                  '                       :BAIRRO, '+
+                  '                       :EMAIL, '+
+                  '                       :CEP, '+
+                  '                       :TELEFONE, '+
+                  '                       :INSCRICAOMUNICIPAL, '+
+                  '                       :INSCRICAOESTADUAL, '+
+                  '                       :CPFCNPJ, '+
+                  '                       :ATIVO, '+
+                  '                       :PAIS, '+
+                  '                       :ESTADO, '+
+                  '                       :MUNICIPIO, '+
+                  '                       :SEXO, '+
+                  '                       :TIPOPESSOA)');
+        Q.ParamByName('ID').AsLargeInt               := NewIDClientes;
+        Q.ParamByName('CODIGO').AsInteger            := MemTable.FieldByName('CODIGO').AsInteger;
+        Q.ParamByName('NOME').AsString               := MemTable.FieldByName('NOME').AsString;
+        Q.ParamByName('APELIDO').AsString            := MemTable.FieldByName('APELIDO').AsString;
+        Q.ParamByName('LOGRADOURO').AsString         := MemTable.FieldByName('LOGRADOURO').AsString;
+        Q.ParamByName('NUMERO').AsInteger            := MemTable.FieldByName('NUMERO').AsInteger;
+        Q.ParamByName('COMPLEMENTO').AsString        := MemTable.FieldByName('COMPLEMENTO').AsString;
+        Q.ParamByName('BAIRRO').AsString             := MemTable.FieldByName('BAIRRO').AsString;
+        Q.ParamByName('EMAIL').AsString              := MemTable.FieldByName('EMAIL').AsString;
+        Q.ParamByName('CEP').AsString                := MemTable.FieldByName('CEP').AsString;
+        Q.ParamByName('TELEFONE').AsString           := MemTable.FieldByName('TELEFONE').AsString;
+        Q.ParamByName('INSCRICAOMUNICIPAL').AsString := MemTable.FieldByName('INSCRICAOMUNICIPAL').AsString;
+        Q.ParamByName('INSCRICAOESTADUAL').AsString  := MemTable.FieldByName('INSCRICAOESTADUAL').AsString;
+        Q.ParamByName('CPFCNPJ').AsString            := MemTable.FieldByName('CPFCNPJ').AsString;
+        Q.ParamByName('ATIVO').AsString              := MemTable.FieldByName('ATIVO').AsString;
+        Q.ParamByName('PAIS').AsLargeInt             := RetornaIDNomeLigacao(MemTable.FieldByName('PAIS').AsString,'PAISES');
+        Q.ParamByName('ESTADO').AsLargeInt           := RetornaIDNomeLigacao(MemTable.FieldByName('ESTADO').AsString,'ESTADOS');
+        Q.ParamByName('MUNICIPIO').AsLargeInt        := RetornaIDNomeLigacao(MemTable.FieldByName('MUNICIPIO').AsString,'MUNICIPIOS');
+        Q.ParamByName('SEXO').AsString               := MemTable.FieldByName('SEXO').AsString;
+        Q.ParamByName('TIPOPESSOA').AsString         := MemTable.FieldByName('TIPOPESSOA').AsString;
+      end;
+      Q.ExecSQL;
+    finally
+      MemTable.Free;
+    end;
+  finally
+    Q.Free;
+  end;
+end;
+
+procedure TConsulta.ValidarCPFCNPJ(FCPFCNPJ: String; FID: Int64);
+begin
+  var Q := NewSQuery;
+  try
+    Q.SQL.Add('SELECT COUNT(ID) AS QTD '+
+              'FROM CLIENTES '+
+              'WHERE CPFCNPJ = :DADO '+
+              'AND ID NOT IN (:ID)');
+    Q.ParamByName('DADO').AsString := FCPFCNPJ;
+    Q.ParamByName('ID').AsLargeInt := FID;
+    Q.Open();
+
+    if (Q.FieldByName('QTD').AsLargeInt > 0) then
+      raise Exception.Create('CPF/CNPJ já cadastrado');
+  finally
+    Q.Free;
+  end;
+end;
+
+end.

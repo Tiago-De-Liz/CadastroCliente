@@ -1,0 +1,80 @@
+unit uQueryPadrao;
+
+interface
+
+uses
+  System.SysUtils,
+  System.Classes,
+
+  FireDAC.UI.Intf,
+  FireDAC.Stan.Intf,
+  FireDAC.Stan.Option,
+  FireDAC.Stan.Error,
+  FireDAC.Phys.Intf,
+  FireDAC.Phys,
+  FireDAC.VCLUI.Wait,
+  FireDAC.Stan.Def,
+
+  FireDAC.Phys.PG,
+  FireDAC.DApt,
+  FireDAC.Stan.Async,
+
+  Data.DB,
+  DBClient,
+
+  FireDAC.Comp.Client;
+
+type
+  TQueryPadrao = class(TDataModule)
+    FDConnection: TFDConnection;
+    QueryCad: TFDQuery;
+    LinkPG:TFDPhysPgDriverLink;
+    FStream:TMemoryStream;
+    procedure CreateQueryCad(Sender: TObject);
+    procedure DestroyQueryCad(Sender: TObject);
+  private
+
+  public
+    property Stream:TMemoryStream read FStream write FStream;
+  end;
+
+implementation
+
+{ TQueryPadrao }
+
+procedure TQueryPadrao.CreateQueryCad(Sender: TObject);
+begin
+  LinkPG :=  TFDPhysPgDriverLink.Create(nil);
+  LinkPG.VendorHome := '.\';
+  FDConnection := TFDConnection.Create(nil);
+  FDConnection.DriverName := 'PG';
+  FDConnection.Params.Add('Server=localhost');
+  FDConnection.Params.Add('Database=ERP');
+  FDConnection.Params.Add('User_Name=postgres');
+  FDConnection.Params.Add('Password=tiagoliz');
+  FDConnection.Params.Add('Port=5432');
+  FDConnection.Connected := True;
+
+  QueryCad := TFDQuery.Create(nil);
+  QueryCad.Connection := FDConnection;
+  FStream := TMemoryStream.Create;
+end;
+
+procedure TQueryPadrao.DestroyQueryCad(Sender: TObject);
+begin
+  FDConnection.Connected := False;
+
+  if (Assigned(QueryCad)) then
+    QueryCad.Free;
+
+  if (Assigned(FDConnection)) then
+    FDConnection.Free;
+
+  if (Assigned(LinkPG)) then
+    LinkPG.Free;
+
+  if (Assigned(Stream)) then
+    Stream.Free;
+end;
+
+end.

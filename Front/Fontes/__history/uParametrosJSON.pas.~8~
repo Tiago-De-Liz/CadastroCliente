@@ -1,0 +1,81 @@
+unit uParametrosJSON;
+
+interface
+
+uses
+  System.JSON,
+  System.SysUtils;
+
+type
+  TParametros = class(TObject)
+  private
+    FNome: string;
+    FTipo:  String;
+    FValor: string;
+  public
+    property Nome:String read FNome write FNome;
+    property Tipo:String read FTipo write FTipo;
+    property Valor:String read FValor write FValor;
+  end;
+
+  TParametrosList = class(TObject)
+  private
+    FParametros:TArray<TParametros>;
+  public
+    function ToJSON: string;
+    procedure LoadFromJSON(const AJSON:String);
+
+    property Parametros:TArray<TParametros> read FParametros write FParametros;
+  end;
+
+implementation
+
+{ TParametrosList }
+
+procedure TParametrosList.LoadFromJSON(const AJSON: String);
+var
+  JSONObject: TJSONValue;
+  Param: TParametros;
+  JSONArray: TJSONArray;
+begin
+  JSONArray := TJSONObject.ParseJSONValue(AJSON) as TJSONArray;
+  try
+    if Assigned(JSONArray) then
+    begin
+      SetLength(FParametros, JSONArray.Count);
+      for var I := 0 to JSONArray.Count - 1 do
+      begin
+        JSONObject := JSONArray.Items[I];
+        Param.Nome := JSONObject.GetValue<string>('nome');
+        Param.Valor := JSONObject.GetValue<string>('nalor');
+        FParametros[I] := Param;
+      end;
+    end;
+  finally
+    JSONArray.Free;
+  end;
+end;
+
+function TParametrosList.ToJSON: string;
+var
+  JSONArr: TJSONArray;
+  ParamObj: TJSONObject;
+  FPram: TParametros;
+begin
+  JSONArr := TJSONArray.Create;
+  try
+    for FPram in FParametros do
+    begin
+      ParamObj := TJSONObject.Create;
+      ParamObj.AddPair('nome', FPram.Nome);
+      ParamObj.AddPair('tipo', FPram.Tipo);
+      ParamObj.AddPair('valor', FPram.Valor);
+      JSONArr.AddElement(ParamObj);
+    end;
+    Result := JSONArr.ToString;
+  finally
+    JSONArr.Free;
+  end;
+end;
+
+end.

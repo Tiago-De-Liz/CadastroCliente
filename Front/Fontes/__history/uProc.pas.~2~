@@ -1,0 +1,68 @@
+unit uProc;
+
+interface
+
+uses
+  Winapi.Windows,
+  Winapi.Messages,
+
+  System.SysUtils,
+  System.Variants,
+  System.Classes,
+  System.ImageList,
+
+  IdHTTP,
+  IdURI,
+  IdSSLOpenSSL,
+
+  Data.DB,
+  DBClient;
+
+type
+  TProc = class
+    Constructor Create;
+    Destructor  Destroy;
+  private
+    FReqProc:TIdHTTP;
+    FProcedimento:String;
+    FParametros:TStringlist;
+    FStream:TMemoryStream;
+    FJSonResultado:String;
+    FTipoAPI:String;
+
+    function URLEncode(const AStr:String): String;
+  public
+    procedure Execute;
+
+    property Procedimento:String read FProcedimento write FProcedimento;
+    property Parametros:TStringlist read FParametros write FParametros;
+    property Stream:TMemoryStream read FStream write FStream;
+    property JSonResultado:String read FJSonResultado write FJSonResultado;
+    property TipoAPI:String read FTipoAPI write FTipoAPI;
+  end;
+
+implementation
+
+{ TProc }
+
+constructor TProc.Create;
+begin
+
+end;
+
+destructor TProc.Destroy;
+begin
+
+end;
+
+procedure TProc.Execute;
+begin
+
+end;
+
+function TProc.URLEncode(const AStr: String): String;
+begin
+
+end;
+
+end.

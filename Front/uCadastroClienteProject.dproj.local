@@ -1,0 +1,18 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<BorlandProject>
+	<Transactions>
+    <Transaction>2024/03/27 21:23:40.000.138,=C:\Users\Usuario\Documents\Embarcadero\Studio\Projects\Unit1.pas</Transaction>
+    <Transaction>2024/03/27 21:24:51.000.494,C:\Users\Usuario\Documents\Embarcadero\Studio\Projects\Unit1.pas=C:\Users\Usuario\Desktop\Project\CadastroCliente\uCadastroClientes.pas</Transaction>
+    <Transaction>2024/03/27 21:24:51.000.494,C:\Users\Usuario\Documents\Embarcadero\Studio\Projects\Unit1.dfm=C:\Users\Usuario\Desktop\Project\CadastroCliente\uCadastroClientes.dfm</Transaction>
+    <Transaction>2024/03/27 21:25:22.000.709,C:\Users\Usuario\Documents\Embarcadero\Studio\Projects\Project1.dproj=C:\Users\Usuario\Desktop\Project\CadastroCliente\uCadastroClienteProject.dproj</Transaction>
+    <Transaction>2024/03/27 21:28:52.000.534,=C:\Users\Usuario\Desktop\Project\CadastroCliente\Front\Fontes\uCadastroClientes.pas</Transaction>
+    <Transaction>2024/03/29 15:10:32.000.061,=C:\Project\CadastroCliente\Front\Unit1.pas</Transaction>
+    <Transaction>2024/03/29 15:10:46.000.777,C:\Project\CadastroCliente\Front\Unit1.pas=C:\Project\CadastroCliente\Front\Fontes\uParametrosJSON.pas</Transaction>
+    <Transaction>2024/03/29 15:25:16.000.498,=C:\Project\CadastroCliente\Front\Unit1.pas</Transaction>
+    <Transaction>2024/03/29 15:25:24.000.408,C:\Project\CadastroCliente\Front\Unit1.pas=C:\Project\CadastroCliente\Front\Fontes\uPadrao.pas</Transaction>
+    <Transaction>2024/03/29 15:25:59.000.637,C:\Project\CadastroCliente\Front\Fontes\uPadrao.pas=C:\Project\CadastroCliente\Front\Fontes\uClassePadrao.pas</Transaction>
+    <Transaction>2024/03/29 15:27:56.000.913,C:\Project\CadastroCliente\Front\Fontes\uClassePadrao.pas=</Transaction>
+    <Transaction>2024/03/31 12:49:03.000.267,=C:\Project\CadastroCliente\Front\Unit1.pas</Transaction>
+    <Transaction>2024/03/31 12:49:14.000.179,C:\Project\CadastroCliente\Front\Fontes\uProc.pas=C:\Project\CadastroCliente\Front\Unit1.pas</Transaction>
+  </Transactions>
+</BorlandProject>

@@ -1,0 +1,20 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<BorlandProject>
+	<Transactions>
+    <Transaction>2024/03/27 21:48:28.000.829,=C:\Users\Usuario\Documents\Embarcadero\Studio\Projects\FormUnit1.pas</Transaction>
+    <Transaction>2024/03/27 21:48:29.000.110,=C:\Users\Usuario\Documents\Embarcadero\Studio\Projects\WebModuleUnit1.pas</Transaction>
+    <Transaction>2024/03/27 21:49:41.000.473,C:\Users\Usuario\Documents\Embarcadero\Studio\Projects\FormUnit1.dfm=C:\Users\Usuario\Desktop\Project\CadastroCliente\Back\Fontes\uSServidor.dfm</Transaction>
+    <Transaction>2024/03/27 21:49:41.000.473,C:\Users\Usuario\Documents\Embarcadero\Studio\Projects\FormUnit1.pas=C:\Users\Usuario\Desktop\Project\CadastroCliente\Back\Fontes\uSServidor.pas</Transaction>
+    <Transaction>2024/03/27 21:50:08.000.742,C:\Users\Usuario\Documents\Embarcadero\Studio\Projects\WebModuleUnit1.pas=C:\Users\Usuario\Desktop\Project\CadastroCliente\Back\Fontes\uSDMServidor.pas</Transaction>
+    <Transaction>2024/03/27 21:50:08.000.742,C:\Users\Usuario\Documents\Embarcadero\Studio\Projects\WebModuleUnit1.dfm=C:\Users\Usuario\Desktop\Project\CadastroCliente\Back\Fontes\uSDMServidor.dfm</Transaction>
+    <Transaction>2024/03/27 21:50:53.000.004,C:\Users\Usuario\Documents\Embarcadero\Studio\Projects\Project1.dproj=C:\Users\Usuario\Desktop\Project\CadastroCliente\Back\uServidorProject.dproj</Transaction>
+    <Transaction>2024/03/28 19:57:29.000.230,C:\Project\CadastroCliente\Back\Fontes\uSDMServidor.pas=</Transaction>
+    <Transaction>2024/03/28 20:27:03.000.149,=C:\Project\CadastroCliente\Back\Unit2.pas</Transaction>
+    <Transaction>2024/03/28 21:07:36.000.324,=C:\Project\CadastroCliente\Back\Unit1.pas</Transaction>
+    <Transaction>2024/03/28 21:07:48.000.416,C:\Project\CadastroCliente\Back\Unit1.pas=C:\Project\CadastroCliente\Back\Fontes\QueryPadrao.pas</Transaction>
+    <Transaction>2024/03/29 08:17:06.000.579,=C:\Project\CadastroCliente\Back\Unit1.pas</Transaction>
+    <Transaction>2024/03/29 08:17:20.000.540,C:\Project\CadastroCliente\Back\Fontes\uSConsulta.pas=C:\Project\CadastroCliente\Back\Unit1.pas</Transaction>
+    <Transaction>2024/03/29 08:17:30.000.822,C:\Project\CadastroCliente\Back\Fontes\uQueryPadrao.pas=C:\Project\CadastroCliente\Back\Fontes\QueryPadrao.pas</Transaction>
+    <Transaction>2024/03/29 17:04:08.000.456,=C:\Project\CadastroCliente\Front\Fontes\uParametrosJSON.pas</Transaction>
+  </Transactions>
+</BorlandProject>
